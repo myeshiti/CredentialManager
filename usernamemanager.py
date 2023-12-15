@@ -29,7 +29,7 @@ class UserCredentialsManager:
         generated_password = ''.join(random.choice(password_characters) for _ in range(12))  # Change the length as needed
         return generated_password
 
-    #Displaus saved credentials
+    #Displays saved credentials
     def display_credentials(self):
         return self.credentials_records
 
