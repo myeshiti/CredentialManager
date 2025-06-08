@@ -1,62 +1,76 @@
-import random
-import re
+from usernamemanager import UserCredentialsManager, CredentialsChecker, CredentialsGenerator
 
-# Parent class to manager users credentials (username and password)
+def main():
+    print("Welcome to the Credential Manager\n")
 
-class UserCredentialsManager:
-    def __init__(self):
-        self.credentials_records = []   #a list to store credentials
-        #self.counter = 1   
+    while True:
+        try:
+            print("Select an option:")
+            print("1. Save Your Own Credentials")
+            print("2. Check If a Credential Is Valid")
+            print("3. Generate Random Credentials")
+            print("4. View Saved Credentials")
+            print("5. Load Credentials from File")
+            print("6. Save Credentials to File")
+            print("7. Exit")
 
+            choice = input("Enter choice (1-7): ").strip()
 
-    # Saves credentials of user's inputs into the list above
+            if choice == "1":
+                manager = UserCredentialsManager()
+                username = input("Enter a username: ")
+                password = input("Enter a password (min 9 characters): ")
+                saved = manager.save_credentials(username, password)
+                print("✅ Saved:", saved)
 
-    def save_credentials(self, user_username, user_password):
-        credentials_entry = {"ID": self.counter, "Username": user_username, "Password": user_password}
+            elif choice == "2":
+                checker = CredentialsChecker()
+                name = input("What is your name? ")
+                username = input("Enter a username to check: ")
+                password = input("Enter the password to check: ")
 
+                valid, errors = checker.check_credentials(username, password, name)
+                if valid:
+                    print("✅ This username and password are valid!")
+                else:
+                    print("❌ Issues found:")
+                    for err in errors:
+                        print("-", err)
 
-    #Checks if a password meets it's length which is 9
-    def check_password(self, user_password):
-        length_pattern = re.compile(r'^.{9,}$')
-        
+            elif choice == "3":
+                generator = CredentialsGenerator()
+                username_type = input("Choose username type (short, medium, long): ").lower()
+                creds = generator.generate_credentials(username_type)
+                print("✅ Generated Credentials:", creds)
 
-    #Generates a random password
-    def generate_password(self):
-        symbols_list = "!@#$%^&*()_-+=<>?"
-    
+            elif choice == "4":
+                viewer = UserCredentialsManager()
+                viewer.load_from_file()
+                print("📄 Stored Credentials:")
+                for cred in viewer.display_credentials():
+                    print(cred)
 
-#checks and validates the credentials being input
+            elif choice == "5":
+                manager = UserCredentialsManager()
+                manager.load_from_file()
+                print("✅ Credentials loaded from file.")
 
-class CredentialsChecker(UserCredentialsManager):
-    length_pattern = re.compile(r'^.{8,}$')
-    symbol_pattern = re.compile(r'[!@#$%^&*(),.?":{}|<>]')
+            elif choice == "6":
+                manager = UserCredentialsManager()
+                manager.load_from_file()  # Load to avoid overwrite
+                manager.save_to_file()
+                print("✅ Credentials saved to file.")
 
-    def __init__(self, test_username, test_password):
-        super().__init__()
-        self.valid_credentials = []
-        
-    # checking for validity
-    def check_credentials(self, user_name, user_password):
-        while True:
-            self.test_username = input(f"Hello {user_name}! Please enter the username you'd like to check: ")
-            self.test_password = input(f"Please enter the password for the username '{self.test_username}': ") + user_password
+            elif choice == "7":
+                print("Goodbye!")
+                break
 
-# Class to genetate user credentials
-class CredentialsGenerator(UserCredentialsManager):
-    def __init__(self):
-        super().__init__()
-    
+            else:
+                print("❗ Invalid choice. Please enter a number between 1 and 7.")
 
-    # Using random, generates a username based on type (short, medium, long)
-    def generate_username(self, username_type):
-        symbols_list = "!@#$%^&*()_-+=<>?"
-        generated_username = ""
+        except Exception as e:
+            print("⚠️ Error:", e)
 
-
-    def generate_password(self):
-        symbols_list = "!@#$%^&*()_-+=<>?"
-       
-
-    def generate_credentials(self, username_type):
-        generated_username = self.generate_username(username_type)
+if __name__ == '__main__':
+    main()
        
